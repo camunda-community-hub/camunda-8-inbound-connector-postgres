@@ -1,0 +1,193 @@
+{
+  "$schema": "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
+  "name": "Postgres Intermediate Connector",
+  "id": "io.camunda.connectors.PostgresInbound.intermediate",
+  "description": "Listen on a Postgres channel for intermediate catch events",
+  "category": {
+    "id": "connectors",
+    "name": "Connectors"
+  },
+  "appliesTo": [
+    "bpmn:IntermediateCatchEvent",
+    "bpmn:IntermediateThrowEvent"
+  ],
+  "elementType": {
+    "value": "bpmn:IntermediateCatchEvent",
+    "eventDefinition": "bpmn:MessageEventDefinition"
+  },
+  "groups": [
+    {
+      "id": "config",
+      "label": "Connector Configuration"
+    },
+    {
+      "id": "activation",
+      "label": "Activation"
+    },
+    {
+      "id": "output",
+      "label": "Output"
+    }
+  ],
+  "properties": [
+    {
+      "type": "Hidden",
+      "value": "io.camunda:postgresinbound:1",
+      "binding": {
+        "type": "zeebe:property",
+        "name": "inbound.type"
+      }
+    },
+    {
+      "type": "Hidden",
+      "generatedValue": {
+        "type": "uuid"
+      },
+      "binding": {
+        "type": "bpmn:Message#property",
+        "name": "name"
+      }
+    },
+    {
+      "id": "postgresUrl",
+      "label": "Postgres URL",
+      "group": "config",
+      "description": "URL of Postgres database",
+      "value": "",
+      "type": "String",
+      "binding": {
+        "type": "zeebe:property",
+        "name": "postgresUrl"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "id": "postgresUsername",
+      "label": "Postgres username",
+      "group": "config",
+      "description": "",
+      "value": "",
+      "type": "String",
+      "binding": {
+        "type": "zeebe:property",
+        "name": "postgresUsername"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "id": "postgresPassword",
+      "label": "Password",
+      "group": "config",
+      "description": "",
+      "value": "",
+      "type": "String",
+      "binding": {
+        "type": "zeebe:property",
+        "name": "postgresPassword"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "type": "String",
+      "label": "Channel",
+      "feel": "optional",
+      "group": "config",
+      "description": "Channel to monitor triggered Postgres events",
+      "value": "",
+      "binding": {
+        "type": "zeebe:property",
+        "name": "channel"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "type": "String",
+      "label": "Polling interval in seconds",
+      "feel": "optional",
+      "group": "config",
+      "description": "Long polling interval",
+      "value": "",
+      "binding": {
+        "type": "zeebe:property",
+        "name": "pollingInterval"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Correlation key (process)",
+      "type": "String",
+      "group": "activation",
+      "feel": "required",
+      "description": "Sets up the correlation key from process variables",
+      "binding": {
+        "type": "bpmn:Message#zeebe:subscription#property",
+        "name": "correlationKey"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Correlation key (payload)",
+      "type": "String",
+      "group": "activation",
+      "feel": "required",
+      "binding": {
+        "type": "zeebe:property",
+        "name": "correlationKeyExpression"
+      },
+      "description": "Extracts the correlation key from the incoming message payload",
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Activation condition",
+      "type": "String",
+      "group": "activation",
+      "feel": "required",
+      "optional": true,
+      "binding": {
+        "type": "zeebe:property",
+        "name": "activationCondition"
+      },
+      "description": "Condition under which the Connector triggers. Leave empty to catch all events"
+    },
+    {
+      "label": "Event variable",
+      "type": "String",
+      "group": "output",
+      "optional": true,
+      "binding": {
+        "type": "zeebe:property",
+        "name": "resultVariable"
+      },
+      "description": "Name of variable to store the contents of the inbound event"
+    },
+    {
+      "label": "Variable expression",
+      "type": "String",
+      "group": "output",
+      "feel": "required",
+      "optional": true,
+      "binding": {
+        "type": "zeebe:property",
+        "name": "resultExpression"
+      },
+      "description": "Expression to map elements of the inbound event to process variables"
+    }
+  ],
+  "icon": {
+    "contents": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcKICAgd2lkdGg9IjE3LjQ2MjAwMnB0IgogICBoZWlnaHQ9IjE4cHQiCiAgIHZpZXdCb3g9IjAgMCAxNy40NjIwMDEgMTgiCiAgIHhtbDpzcGFjZT0icHJlc2VydmUiCiAgIHZlcnNpb249IjEuMSIKICAgaWQ9InN2ZzEyIgogICBzb2RpcG9kaTpkb2NuYW1lPSJwb3N0Z3Jlc3FsLnN2ZyIKICAgaW5rc2NhcGU6dmVyc2lvbj0iMS4zICgwZTE1MGVkLCAyMDIzLTA3LTIxKSIKICAgeG1sbnM6aW5rc2NhcGU9Imh0dHA6Ly93d3cuaW5rc2NhcGUub3JnL25hbWVzcGFjZXMvaW5rc2NhcGUiCiAgIHhtbG5zOnNvZGlwb2RpPSJodHRwOi8vc29kaXBvZGkuc291cmNlZm9yZ2UubmV0L0RURC9zb2RpcG9kaS0wLmR0ZCIKICAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICB4bWxuczpzdmc9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcwogICBpZD0iZGVmczEyIiAvPjxzb2RpcG9kaTpuYW1lZHZpZXcKICAgaWQ9Im5hbWVkdmlldzEyIgogICBwYWdlY29sb3I9IiNmZmZmZmYiCiAgIGJvcmRlcmNvbG9yPSIjMDAwMDAwIgogICBib3JkZXJvcGFjaXR5PSIwLjI1IgogICBpbmtzY2FwZTpzaG93cGFnZXNoYWRvdz0iMiIKICAgaW5rc2NhcGU6cGFnZW9wYWNpdHk9IjAuMCIKICAgaW5rc2NhcGU6cGFnZWNoZWNrZXJib2FyZD0iMCIKICAgaW5rc2NhcGU6ZGVza2NvbG9yPSIjZDFkMWQxIgogICBpbmtzY2FwZTpkb2N1bWVudC11bml0cz0icHQiCiAgIGlua3NjYXBlOnpvb209IjQzLjA1NTA3OSIKICAgaW5rc2NhcGU6Y3g9IjQuMTY5MDc4NCIKICAgaW5rc2NhcGU6Y3k9IjYuNTYxMzYzIgogICBpbmtzY2FwZTp3aW5kb3ctd2lkdGg9IjEzOTIiCiAgIGlua3NjYXBlOndpbmRvdy1oZWlnaHQ9Ijk0MiIKICAgaW5rc2NhcGU6d2luZG93LXg9IjAiCiAgIGlua3NjYXBlOndpbmRvdy15PSI3NTIiCiAgIGlua3NjYXBlOndpbmRvdy1tYXhpbWl6ZWQ9IjAiCiAgIGlua3NjYXBlOmN1cnJlbnQtbGF5ZXI9InN2ZzEyIiAvPiYjMTA7PGcKICAgaWQ9Im9yZ2luYWwiCiAgIHN0eWxlPSJjbGlwLXJ1bGU6bm9uemVybztmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6IzAwMDAwMDtzdHJva2UtbWl0ZXJsaW1pdDo0IgogICB0cmFuc2Zvcm09Im1hdHJpeCgwLjA0MDMwMjg2LDAsMCwwLjA0MDMwMjg2LDAuMDMzODQwMjcsMC4wMzQ2Mjg4OCkiPiYjMTA7CTwvZz4mIzEwOzxnCiAgIGlkPSJMYXllcl94MDAyMF8zIgogICBzdHlsZT0iY2xpcC1ydWxlOm5vbnplcm87ZmlsbDpub25lO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTojZmZmZmZmO3N0cm9rZS13aWR0aDoxMi40NjUxO3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDo0IgogICB0cmFuc2Zvcm09Im1hdHJpeCgwLjA0MDMwMjg2LDAsMCwwLjA0MDMwMjg2LDAuMDMzODQwMjcsMC4wMzQ2Mjg4OCkiPiYjMTA7PHBhdGgKICAgc3R5bGU9ImZpbGw6IzAwMDAwMDtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MzcuMzk1MztzdHJva2UtbGluZWNhcDpidXR0O3N0cm9rZS1saW5lam9pbjptaXRlciIKICAgZD0ibSAzMjMuMjA1LDMyNC4yMjcgYyAyLjgzMywtMjMuNjAxIDEuOTg0LC0yNy4wNjIgMTkuNTYzLC0yMy4yMzkgbCA0LjQ2MywwLjM5MiBjIDEzLjUxNywwLjYxNSAzMS4xOTksLTIuMTc0IDQxLjU4NywtNyAyMi4zNjIsLTEwLjM3NiAzNS42MjIsLTI3LjcgMTMuNTcyLC0yMy4xNDggLTUwLjI5NywxMC4zNzYgLTUzLjc1NSwtNi42NTUgLTUzLjc1NSwtNi42NTUgQyA0MDEuNzQ2LDE4NS43NzQgNDIzLjk0OCw4NS43NDEgNDA0Ljc4NCw2MS4yNTUgMzUyLjUxNCwtNS41MzQgMjYyLjAzNiwyNi4wNDkgMjYwLjUyMiwyNi44NjkgbCAtMC40ODIsMC4wODkgYyAtOS45MzgsLTIuMDYyIC0yMS4wNiwtMy4yOTQgLTMzLjU1NCwtMy40OTYgLTIyLjc2MSwtMC4zNzQgLTQwLjAzMiw1Ljk2NyAtNTMuMTMzLDE1LjkwNCAwLDAgLTE2MS40MDgsLTY2LjQ5OCAtMTUzLjg5OSw4My42MjggMS41OTcsMzEuOTM2IDQ1Ljc3NywyNDEuNjU1IDk4LjQ3LDE3OC4zMSAxOS4yNTksLTIzLjE2MyAzNy44NzEsLTQyLjc0OCAzNy44NzEsLTQyLjc0OCA5LjI0Miw2LjE0IDIwLjMwNyw5LjI3MiAzMS45MTIsOC4xNDcgbCAwLjg5NywtMC43NjUgYyAtMC4yODEsMi44NzYgLTAuMTU3LDUuNjg5IDAuMzU5LDkuMDE5IC0xMy41NzIsMTUuMTY3IC05LjU4NCwxNy44MyAtMzYuNzIzLDIzLjQxNiAtMjcuNDU3LDUuNjU5IC0xMS4zMjYsMTUuNzM0IC0wLjc5NywxOC4zNjcgMTIuNzY4LDMuMTkzIDQyLjMwNSw3LjcxNiA2Mi4yNjgsLTIwLjIyNCBsIC0wLjc5NSwzLjE4OCBjIDUuMzI1LDQuMjYgNC45NjUsMzAuNjE5IDUuNzIsNDkuNDUyIDAuNzU2LDE4LjgzNCAyLjAxNywzNi40MDkgNS44NTYsNDYuNzcxIDMuODM5LDEwLjM2IDguMzY5LDM3LjA1IDQ0LjAzNiwyOS40MDYgMjkuODA5LC02LjM4OCA1Mi42LC0xNS41ODIgNTQuNjc3LC0xMDEuMTA3IgogICBpZD0icGF0aDEiIC8+JiMxMDs8cGF0aAogICBzdHlsZT0iZmlsbDojMzM2NzkxO3N0cm9rZTpub25lIgogICBkPSJtIDQwMi4zOTUsMjcxLjIzIGMgLTUwLjMwMiwxMC4zNzYgLTUzLjc2LC02LjY1NSAtNTMuNzYsLTYuNjU1IDUzLjExMSwtNzguODA4IDc1LjMxMywtMTc4Ljg0MyA1Ni4xNTMsLTIwMy4zMjYgLTUyLjI3LC02Ni43ODUgLTE0Mi43NTIsLTM1LjIgLTE0NC4yNjIsLTM0LjM4IGwgLTAuNDg2LDAuMDg3IGMgLTkuOTM4LC0yLjA2MyAtMjEuMDYsLTMuMjkyIC0zMy41NiwtMy40OTYgLTIyLjc2MSwtMC4zNzMgLTQwLjAyNiw1Ljk2NyAtNTMuMTI3LDE1LjkwMiAwLDAgLTE2MS40MTEsLTY2LjQ5NSAtMTUzLjkwNCw4My42MyAxLjU5NywzMS45MzggNDUuNzc2LDI0MS42NTcgOTguNDcxLDE3OC4zMTIgMTkuMjYsLTIzLjE2MyAzNy44NjksLTQyLjc0OCAzNy44NjksLTQyLjc0OCA5LjI0Myw2LjE0IDIwLjMwOCw5LjI3MiAzMS45MDgsOC4xNDcgbCAwLjkwMSwtMC43NjUgYyAtMC4yOCwyLjg3NiAtMC4xNTIsNS42ODkgMC4zNjEsOS4wMTkgLTEzLjU3NSwxNS4xNjcgLTkuNTg2LDE3LjgzIC0zNi43MjMsMjMuNDE2IC0yNy40NTksNS42NTkgLTExLjMyOCwxNS43MzQgLTAuNzk2LDE4LjM2NyAxMi43NjgsMy4xOTMgNDIuMzA3LDcuNzE2IDYyLjI2NiwtMjAuMjI0IGwgLTAuNzk2LDMuMTg4IGMgNS4zMTksNC4yNiA5LjA1NCwyNy43MTEgOC40MjgsNDguOTY5IC0wLjYyNiwyMS4yNTkgLTEuMDQ0LDM1Ljg1NCAzLjE0Nyw0Ny4yNTQgNC4xOTEsMTEuNCA4LjM2OCwzNy4wNSA0NC4wNDIsMjkuNDA2IDI5LjgwOSwtNi4zODggNDUuMjU2LC0yMi45NDIgNDcuNDA1LC01MC41NTUgMS41MjUsLTE5LjYzMSA0Ljk3NiwtMTYuNzI5IDUuMTk0LC0zNC4yOCBsIDIuNzY4LC04LjMwOSBjIDMuMTkyLC0yNi42MTEgMC41MDcsLTM1LjE5NiAxOC44NzIsLTMxLjIwMyBsIDQuNDYzLDAuMzkyIGMgMTMuNTE3LDAuNjE1IDMxLjIwOCwtMi4xNzQgNDEuNTkxLC03IDIyLjM1OCwtMTAuMzc2IDM1LjYxOCwtMjcuNyAxMy41NzMsLTIzLjE0OCB6IgogICBpZD0icGF0aDIiIC8+JiMxMDs8cGF0aAogICBkPSJtIDIxNS44NjYsMjg2LjQ4NCBjIC0xLjM4NSw0OS41MTYgMC4zNDgsOTkuMzc3IDUuMTkzLDExMS40OTUgNC44NDgsMTIuMTE4IDE1LjIyMywzNS42ODggNTAuOSwyOC4wNDUgMjkuODA2LC02LjM5IDQwLjY1MSwtMTguNzU2IDQ1LjM1NywtNDYuMDUxIDMuNDY2LC0yMC4wODIgMTAuMTQ4LC03NS44NTQgMTEuMDA1LC04Ny4yODEiCiAgIGlkPSJwYXRoMyIgLz4mIzEwOzxwYXRoCiAgIGQ9Im0gMTczLjEwNCwzOC4yNTYgYyAwLDAgLTE2MS41MjEsLTY2LjAxNiAtMTU0LjAxMiw4NC4xMDkgMS41OTcsMzEuOTM4IDQ1Ljc3OSwyNDEuNjY0IDk4LjQ3MywxNzguMzE2IDE5LjI1NiwtMjMuMTY2IDM2LjY3MSwtNDEuMzM1IDM2LjY3MSwtNDEuMzM1IgogICBpZD0icGF0aDQiIC8+JiMxMDs8cGF0aAogICBkPSJtIDI2MC4zNDksMjYuMjA3IGMgLTUuNTkxLDEuNzUzIDg5Ljg0OCwtMzQuODg5IDE0NC4wODcsMzQuNDE3IDE5LjE1OSwyNC40ODQgLTMuMDQzLDEyNC41MTkgLTU2LjE1MywyMDMuMzI5IgogICBpZD0icGF0aDUiIC8+JiMxMDs8cGF0aAogICBzdHlsZT0ic3Ryb2tlLWxpbmVqb2luOmJldmVsIgogICBkPSJtIDM0OC4yODIsMjYzLjk1MyBjIDAsMCAzLjQ2MSwxNy4wMzYgNTMuNzY0LDYuNjUzIDIyLjA0LC00LjU1MiA4Ljc3NiwxMi43NzQgLTEzLjU3NywyMy4xNTUgLTE4LjM0NSw4LjUxNCAtNTkuNDc0LDEwLjY5NiAtNjAuMTQ2LC0xLjA2OSAtMS43MjksLTMwLjM1NSAyMS42NDcsLTIxLjEzMyAxOS45NiwtMjguNzM5IC0xLjUyNSwtNi44NSAtMTEuOTc5LC0xMy41NzMgLTE4Ljg5NCwtMzAuMzM4IC02LjAzNywtMTQuNjMzIC04Mi43OTYsLTEyNi44NDkgMjEuMjg3LC0xMTAuMTgzIDMuODEzLC0wLjc4OSAtMjcuMTQ2LC05OS4wMDIgLTEyNC41NTMsLTEwMC41OTkgLTk3LjM4NSwtMS41OTcgLTk0LjE5LDExOS43NjIgLTk0LjE5LDExOS43NjIiCiAgIGlkPSJwYXRoNiIgLz4mIzEwOzxwYXRoCiAgIGQ9Im0gMTg4LjYwNCwyNzQuMzM0IGMgLTEzLjU3NywxNS4xNjYgLTkuNTg0LDE3LjgyOSAtMzYuNzIzLDIzLjQxNyAtMjcuNDU5LDUuNjYgLTExLjMyNiwxNS43MzMgLTAuNzk3LDE4LjM2NSAxMi43NjgsMy4xOTUgNDIuMzA3LDcuNzE4IDYyLjI2NiwtMjAuMjI5IDYuMDc4LC04LjUwOSAtMC4wMzYsLTIyLjA4NiAtOC4zODUsLTI1LjU0NyAtNC4wMzQsLTEuNjcxIC05LjQyOCwtMy43NjUgLTE2LjM2MSwzLjk5NCB6IgogICBpZD0icGF0aDciIC8+JiMxMDs8cGF0aAogICBkPSJtIDE4Ny43MTUsMjc0LjA2OSBjIC0xLjM2OCwtOC45MTcgMi45MywtMTkuNTI4IDcuNTM2LC0zMS45NDIgNi45MjIsLTE4LjYyNiAyMi44OTMsLTM3LjI1NSAxMC4xMTcsLTk2LjMzOSAtOS41MjMsLTQ0LjAyOSAtNzMuMzk2LC05LjE2MyAtNzMuNDM2LC0zLjE5MyAtMC4wMzksNS45NjggMi44ODksMzAuMjYgLTEuMDY3LDU4LjU0OCAtNS4xNjIsMzYuOTEzIDIzLjQ4OCw2OC4xMzIgNTYuNDc5LDY0LjkzOCIKICAgaWQ9InBhdGg4IiAvPiYjMTA7PHBhdGgKICAgc3R5bGU9ImZpbGw6I2ZmZmZmZjtzdHJva2Utd2lkdGg6NC4xNTU7c3Ryb2tlLWxpbmVjYXA6YnV0dDtzdHJva2UtbGluZWpvaW46bWl0ZXIiCiAgIGQ9Im0gMTcyLjUxNywxNDEuNyBjIC0wLjI4OCwyLjAzOSAzLjczMyw3LjQ4IDguOTc2LDguMjA3IDUuMjM0LDAuNzMgOS43MTQsLTMuNTIyIDkuOTk4LC01LjU1OSAwLjI4NCwtMi4wMzkgLTMuNzMyLC00LjI4NSAtOC45NzcsLTUuMDE1IC01LjIzNywtMC43MzEgLTkuNzE5LDAuMzMzIC05Ljk5NiwyLjM2NyB6IgogICBpZD0icGF0aDkiIC8+JiMxMDs8cGF0aAogICBzdHlsZT0iZmlsbDojZmZmZmZmO3N0cm9rZS13aWR0aDoyLjA3NzU7c3Ryb2tlLWxpbmVjYXA6YnV0dDtzdHJva2UtbGluZWpvaW46bWl0ZXIiCiAgIGQ9Im0gMzMxLjk0MSwxMzcuNTQzIGMgMC4yODQsMi4wMzkgLTMuNzMyLDcuNDggLTguOTc2LDguMjA3IC01LjIzOCwwLjczIC05LjcxOCwtMy41MjIgLTEwLjAwNSwtNS41NTkgLTAuMjc3LC0yLjAzOSAzLjc0LC00LjI4NSA4Ljk3OSwtNS4wMTUgNS4yMzksLTAuNzMgOS43MTgsMC4zMzMgMTAuMDAyLDIuMzY4IHoiCiAgIGlkPSJwYXRoMTAiIC8+JiMxMDs8cGF0aAogICBkPSJtIDM1MC42NzYsMTIzLjQzMiBjIDAuODYzLDE1Ljk5NCAtMy40NDUsMjYuODg4IC0zLjk4OCw0My45MTQgLTAuODA0LDI0Ljc0OCAxMS43OTksNTMuMDc0IC03LjE5MSw4MS40MzUiCiAgIGlkPSJwYXRoMTEiIC8+JiMxMDs8cGF0aAogICBzdHlsZT0ic3Ryb2tlLXdpZHRoOjMiCiAgIGQ9Ik0gMCw2MC4yMzIiCiAgIGlkPSJwYXRoMTIiIC8+JiMxMDs8L2c+JiMxMDs8L3N2Zz4K"
+  }
+}
